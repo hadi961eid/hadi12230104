@@ -1,0 +1,77 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      appBar: AppBar(
+        title: Text("Tax Calculator"),
+      ),
+      body: Payroll(),
+    ),
+  ));
+}
+
+class Payroll extends StatefulWidget {
+  @override
+  _PayrollState createState() => _PayrollState();
+}
+
+class _PayrollState extends State<Payroll> {
+  final TextEditingController incomeController = TextEditingController();
+  final TextEditingController rateController = TextEditingController();
+
+  String resultText = "";
+
+  void calculateTax() {
+    double gross = double.tryParse(incomeController.text) ?? 0.0;
+    double taxRate = double.tryParse(rateController.text) ?? 0.0;
+    double deducted = gross * (taxRate / 100);
+    double net = gross - deducted;
+
+    setState(() {
+      resultText = "Gross: \$${gross.toStringAsFixed(2)}\n"
+          "Tax: \$${deducted.toStringAsFixed(2)}\n"
+          "Net: \$${net.toStringAsFixed(2)}";
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            controller: incomeController,
+            decoration: InputDecoration(
+              labelText: "Income",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          SizedBox(height: 16),
+          TextField(
+            controller: rateController,
+            decoration: InputDecoration(
+              labelText: "Tax Rate (%)",
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: calculateTax,
+            child: Text("Calculate"),
+          ),
+          SizedBox(height: 20),
+          // Display the results in a text area
+          Text(
+            resultText,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+}
