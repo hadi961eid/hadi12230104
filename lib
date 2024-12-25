@@ -1,74 +1,98 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: Scaffold(
-      appBar: AppBar(
-        title: Text("Tax Calculator"),
-      ),
-      body: Payroll(),
-    ),
-  ));
-}
+void main() => runApp(const MyApp());
 
-class Payroll extends StatefulWidget {
-  @override
-  _PayrollState createState() => _PayrollState();
-}
-
-class _PayrollState extends State<Payroll> {
-  final TextEditingController incomeController = TextEditingController();
-  final TextEditingController rateController = TextEditingController();
-
-  String resultText = "";
-
-  void calculateTax() {
-    double gross = double.tryParse(incomeController.text) ?? 0.0;
-    double taxRate = double.tryParse(rateController.text) ?? 0.0;
-    double deducted = gross * (taxRate / 100);
-    double net = gross - deducted;
-
-    setState(() {
-      resultText = "Gross: \$${gross.toStringAsFixed(2)}\n"
-          "Tax: \$${deducted.toStringAsFixed(2)}\n"
-          "Net: \$${net.toStringAsFixed(2)}";
-    });
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Tax Calculator',
+      home: TaxCalculator(),
+    );
+  }
+}
+
+class TaxCalculator extends StatelessWidget {
+  const TaxCalculator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tax Calculator'),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: const TaxCalculatorBody(),
+    );
+  }
+}
+
+class TaxCalculatorBody extends StatefulWidget {
+  const TaxCalculatorBody({super.key});
+
+  @override
+  State<TaxCalculatorBody> createState() => _TaxCalculatorBodyState();
+}
+
+class _TaxCalculatorBodyState extends State<TaxCalculatorBody> {
+  final TextEditingController incomeController = TextEditingController();
+  final TextEditingController rateController = TextEditingController();
+  String resultText = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextField(
-            controller: incomeController,
-            decoration: InputDecoration(
-              labelText: "Income",
-              border: OutlineInputBorder(),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 230,
+            child: TextField(
+              controller: incomeController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter income',
+              ),
             ),
-            keyboardType: TextInputType.number,
           ),
-          SizedBox(height: 16),
-          TextField(
-            controller: rateController,
-            decoration: InputDecoration(
-              labelText: "Tax Rate (%)",
-              border: OutlineInputBorder(),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 230,
+            child: TextField(
+              controller: rateController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter tax rate (%)',
+              ),
             ),
-            keyboardType: TextInputType.number,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 20),
           ElevatedButton(
-            onPressed: calculateTax,
-            child: Text("Calculate"),
+            onPressed: () {
+              setState(() {
+                double gross = double.tryParse(incomeController.text) ?? 0.0;
+                double taxRate = double.tryParse(rateController.text) ?? 0.0;
+                double deducted = gross * (taxRate / 100);
+                double net = gross - deducted;
+                resultText = "Gross: \$${gross.toStringAsFixed(2)}\n"
+                    "Tax: \$${deducted.toStringAsFixed(2)}\n"
+                    "Net: \$${net.toStringAsFixed(2)}";
+              });
+            },
+            child: const Icon(Icons.calculate, size: 50),
           ),
-          SizedBox(height: 20),
-          // Display the results in a text area
+          const SizedBox(height: 20),
           Text(
             resultText,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ],
       ),
